@@ -2,7 +2,7 @@
 HTTP Server to receive BLE commands to control Switch Bot devices.
 
 ## Usage
-This program aims to provide a better solution to control Switch Bot devices when integrating with Homebridge. The current official Switch Bot plugins on Homebridge does not provide a stable BLE connection to the SwitchBot devices, especially when running on a RaspberryPi. Users who use this program can consider to install [homebridge-http-switch](https://github.com/Supereg/homebridge-http-switch) plugin to use with this program.
+This program aims to provide a better solution to control Switch Bot devices when integrating with Homebridge. The current official Switch Bot plugins on Homebridge does not provide a stable BLE connection to SwitchBot devices, especially when running on a RaspberryPi. Users can consider to install [homebridge-http-switch](https://github.com/Supereg/homebridge-http-switch) plugin to use together with this program.
 
 ## Dependencies
 ```
