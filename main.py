@@ -24,7 +24,10 @@ def load_file(file):
         return file_handler.read()
 
 
-def serve_on_port(port, user, pwd):
+def serve_on_port(port: int, user, pwd, **kwargs):
+    HTTPHandler.RETURN_TRUE  = kwargs.pop("return_on", HTTPHandler.RETURN_TRUE)
+    HTTPHandler.RETURN_FALSE = kwargs.pop("return_off", HTTPHandler.RETURN_FALSE)
+    
     server = HTTPServer(('0.0.0.0', port), HTTPHandler)
     if user is not None and pwd is not None:
         server.set_auth(user, pwd)
@@ -33,6 +36,8 @@ def serve_on_port(port, user, pwd):
 
 
 class HTTPHandler(BaseHTTPRequestHandler):
+    RETURN_TRUE  = '1'
+    RETURN_FALSE = '0'
 
     def do_AUTHHEAD(self):
         self.send_response(401)
@@ -69,21 +74,21 @@ class HTTPHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b'Device not found...')
             elif command_type in choices :
                 bot = Switchbot(mac,None,interface,retry_count=3,scan_timeout=connect_timeout)
-                result = 'OK'
+                result = False
 
                 if command_type == 'on':
-                    asyncio.run(bot.turn_on())
+                    result = asyncio.run(bot.turn_on())
                 elif command_type == 'off':
-                    asyncio.run(bot.turn_off())
+                    result = asyncio.run(bot.turn_off())
                 elif command_type == 'press':
-                    asyncio.run(bot.press())
+                    result = asyncio.run(bot.press())
                 elif command_type == 'status':
                     asyncio.run(bot.update())
-                    result = bot.is_on() and '1' or '0'
+                    result = bot.is_on()
                 
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write(bytes(result, 'utf-8'))
+                self.wfile.write(bytes(result and self.RETURN_TRUE or self.RETURN_FALSE, 'utf-8'))
             elif command_type == 'status':
                 self.send_response(200)
                 self.end_headers()
@@ -99,11 +104,15 @@ parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-u", "--user", default=None, help="Username")
 parser.add_argument("-pwd", "--password", default=None, help="Password")
 parser.add_argument("-p", "--port", default=8080, type=int, help="Port")
+parser.add_argument("-on", "--on_or_ok", default="1", type=str, help="Value to return if device is On or the requested action was executed successfully")
+parser.add_argument("-off", "--off_or_fail", default="0", type=str, help="Value to return if device is Off or the requested action was failed to execute")
 args = vars(parser.parse_args())
 
 PORT = args["port"]
 USER = args["user"]
-PWD = args["password"]
+PWD  = args["password"]
+ON   = args["on_or_ok"]
+OFF  = args["off_or_fail"]
 
 if __name__ == '__main__':
-    serve_on_port(PORT, USER, PWD)
+    serve_on_port(PORT, USER, PWD, return_on = ON, return_off = OFF)
