@@ -74,21 +74,21 @@ class HTTPHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b'Device not found...')
             elif command_type in choices :
                 bot = Switchbot(mac,None,interface,retry_count=3,scan_timeout=connect_timeout)
-                result = False
+                result = True
 
                 if command_type == 'on':
-                    result = asyncio.run(bot.turn_on())
+                    asyncio.run(bot.turn_on())
                 elif command_type == 'off':
-                    result = asyncio.run(bot.turn_off())
+                    asyncio.run(bot.turn_off())
                 elif command_type == 'press':
-                    result = asyncio.run(bot.press())
+                    asyncio.run(bot.press())
                 elif command_type == 'status':
                     asyncio.run(bot.update())
-                    result = bot.is_on()
+                    result = bot.is_on() and self.RETURN_TRUE or self.RETURN_FALSE
                 
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write(bytes(result and self.RETURN_TRUE or self.RETURN_FALSE, 'utf-8'))
+                self.wfile.write(bytes(result, 'utf-8'))
             elif command_type == 'status':
                 self.send_response(200)
                 self.end_headers()
