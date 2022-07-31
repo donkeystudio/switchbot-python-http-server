@@ -48,5 +48,6 @@ GET /?command=XXX&device=XX:XX:XX:XX:XX&interface=0&connect_timeout=5
 | `device` | `string` | **Required**. BLE MAC address of the Switchbot device. Can be either XX:XX:XX or XX-XX-XX formats |
 | `interface` | `number` | _Optional_. ID of the HCI bluetooth interface. _Default `0` for `hci0` interface_ |
 | `connect_timeout` | `number` | _Optional_. Set connect timeout before stopping the request. _Default `5` seconds_ |
+| `password` | `string` | _Optional_. Password of the Switchbot device. Base64 Encoded. _Default no password_ |
 
 Return: `1` for successful request or the device status is ON; `0` for otherwise. Response codes can be changed by setting `-on / --on_or_ok` and `-off / --off_or_fail` arguments

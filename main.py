@@ -4,6 +4,8 @@ from http.server import BaseHTTPRequestHandler
 from socketserver import TCPServer
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import urllib.parse as urlparse
+from bleak_retry_connector import BLEDevice
+from click import password_option
 from switchbot import Switchbot
 import asyncio
 
@@ -58,6 +60,10 @@ class HTTPHandler(BaseHTTPRequestHandler):
             interface        = query_components.get('interface', [0])[0]
             connect_timeout  = query_components.get('connect_timeout', [5])[0]
             command_type     = query_components.get('command', '[]')[0]
+            password         = query_components.get('password', [None])[0]
+
+            if password is not None:
+                password = base64.b64decode(password)
 
             print ("device: {}, interface: {}, timeout: {}, command: {}".format(mac, interface, connect_timeout, command_type))
 
@@ -68,8 +74,8 @@ class HTTPHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b'Device not found...')
             elif command_type in choices :
-                bot = Switchbot(mac,None,interface,retry_count=3,scan_timeout=connect_timeout)
-                result = True
+                bot = Switchbot(BLEDevice(mac, None),password,interface,retry_count=3,scan_timeout=connect_timeout)
+                result = self.RETURN_TRUE
 
                 if command_type == 'on':
                     asyncio.run(bot.turn_on())
