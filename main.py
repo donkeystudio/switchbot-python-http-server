@@ -19,11 +19,6 @@ class HTTPServer(TCPServer):
         return self.key
 
 
-def load_file(file):
-    with open(file, 'rb') as file_handler:
-        return file_handler.read()
-
-
 def serve_on_port(port: int, user, pwd, **kwargs):
     HTTPHandler.RETURN_TRUE  = kwargs.pop("return_on", HTTPHandler.RETURN_TRUE)
     HTTPHandler.RETURN_FALSE = kwargs.pop("return_off", HTTPHandler.RETURN_FALSE)
@@ -89,10 +84,6 @@ class HTTPHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.end_headers()
                 self.wfile.write(bytes(result, 'utf-8'))
-            elif command_type == 'status':
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(b'Not yet supported')
             else:
                 self.send_response(404)
                 self.end_headers()

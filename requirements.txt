@@ -1,1 +1,1 @@
-PySwitchbot==0.14.0
+PySwitchbot==0.15.2
