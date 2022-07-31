@@ -5,7 +5,6 @@ from socketserver import TCPServer
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import urllib.parse as urlparse
 from bleak_retry_connector import BLEDevice
-from click import password_option
 from switchbot import Switchbot
 import asyncio
 
