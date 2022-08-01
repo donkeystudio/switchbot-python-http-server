@@ -4,7 +4,6 @@ from http.server import BaseHTTPRequestHandler
 from socketserver import TCPServer
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import urllib.parse as urlparse
-from bleak_retry_connector import BLEDevice
 from switchbot import Switchbot
 import asyncio
 
@@ -73,7 +72,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b'Device not found...')
             elif command_type in choices :
-                bot = Switchbot(BLEDevice(mac, None),password,interface,retry_count=3,scan_timeout=connect_timeout)
+                bot = Switchbot(mac,password,interface,retry_count=3,scan_timeout=connect_timeout)
                 result = self.RETURN_TRUE
 
                 if command_type == 'on':
